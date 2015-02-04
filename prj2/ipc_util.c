@@ -38,30 +38,27 @@ int child_setup_ipc(int mode){
 }
 
 int parent_setup_ipc(char* cmd, char* arg, int *mode){
-    printf("dbg iu.c 40, cmd: %s\n", cmd);
     static int old_mode = 0;
     if( strcmp("switch",cmd)==0 ){
-	printf("oldmode: %d\tcurmode:%d\n",old_mode, *mode);
+	printf("dbg iu.c oldmode: %d\tcurmode:%d\n",old_mode, *mode);
 	if( *mode == old_mode && *mode != 0){
 	    printf("********CLIENT: ipc mode unchanged\n");
 	    return 0;
 	}
-	if( !strcmp("pipe",arg) ){
-	    *mode = 1;
-	    old_mode = *mode ; 
-	    printf("********CLIENT: ipc mode chosen: pipe\n");
-	}
-	else if( !strcmp("fifo",arg) ){
-	    old_mode = *mode = 2;
-	    printf("********CLIENT: ipc mode chosen: fifo\n");
-	}
-	else if( !strcmp("svmq",arg) ){
-	    old_mode = *mode = 3;
-	    printf("********CLIENT: ipc mode chosen: svmq\n");
-	}
-	else if( !strcmp("pomq",arg) ){
-	    old_mode = *mode = 4;
-	    printf("********CLIENT: ipc mode chosen: pomq\n");
+	else{
+	   if( !strcmp("pipe",arg) ){
+		old_mode = *mode = 1 ; 
+	    }
+	    else if( !strcmp("fifo",arg) ){
+		old_mode = *mode = 2;
+	    }
+	    else if( !strcmp("svmq",arg) ){
+		old_mode = *mode = 3;
+	    }
+	    else if( !strcmp("pomq",arg) ){
+		old_mode = *mode = 4;
+	    }
+	    printf("********CLIENT: ipc mode chosen: %s\n",arg);
 	}
     }
     return 0;

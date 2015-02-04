@@ -5,7 +5,8 @@ int main(int argc, char** argv){
 /**SERVER is exec'd by the child who has setup ipc in advance*/
 /**vars*********************/
     MESG mesg;
-    int mode = 1;// for test = atoi(argv[1]);
+    //////////for dbg /////////////////
+    int mode = 1;// = atoi(argv[1]);
 /**setup signal handling*/
     struct sigaction server_sa, old_sa;
     server_sa.sa_handler = server_handler;
@@ -26,28 +27,21 @@ int main(int argc, char** argv){
 	got_usr1 = 0;
 /**read the message from ipc*/
 	child_get_mesg(&mesg, mode);
-    ////for test /////////////////////////////
-    char* token = strtok(mesg.mesg_data," ");
-    while(token != NULL){
-    fprintf(stderr,"dbg s.c: %s\n",token);
-    token = strtok(NULL," ");
-    }
-    ////////////////////////////////////////
 
 
 /**process the message to handle file option*/
-	child_handle_mesg(&mesg);
-    perror("dbg s.c 2");
+	child_handle_mesg(&mesg, &mode);
+    //perror("dbg s.c 2");
 
 
 /**write the result back to the ipc*/
 	child_send_mesg(&mesg,mode);
-    perror("dbg s.c 3");
+    //perror("dbg s.c 3");
 
 
 /**signal client and goto sleep*/
 	kill(getppid(),SIGUSR1);
-    perror("dbg s.c 4");
+    //perror("dbg s.c 4");
 	sigprocmask(SIG_SETMASK,&old_sa.sa_mask,NULL);
     }
     perror("dbg s.c 5");

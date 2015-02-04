@@ -12,9 +12,9 @@ int child_get_mesg(MESG* mesg, int mode){
 	   read(STDIN_FILENO,&(mesg->mesg_type),sizeof(int));
 	   read(STDIN_FILENO,mesg->mesg_data,MAX_BUF);
 	   //for test/////////////////////////////
-	   fprintf(stderr, "%d\n", mesg->mesg_len);
-	   fprintf(stderr, "%d\n", mesg->mesg_type);
-	   fprintf(stderr, "%s\n", mesg->mesg_data);
+	   fprintf(stderr, "dbg su.c mesg_len: %d\n", mesg->mesg_len);
+	   fprintf(stderr, "dbg su.c mesg_type: %d\n", mesg->mesg_type);
+	   fprintf(stderr, "dbg su.c mesg_data: %s\n", mesg->mesg_data);
 	   //////////////////////////////////////////
 	   break;
 	case 2:	// fifo
@@ -44,14 +44,27 @@ int child_send_mesg(MESG* mesg, int mode){
     return 0;
 }
 
-int child_handle_mesg(MESG* mesg){ // done
+int child_handle_mesg(MESG* mesg, int* mode){ // done
 /**get the command and filename*/
-    char cmd[CMD_LEN],fname[FNAME_LEN], *token;
-    token = strtok(mesg->mesg_data," \n"); 
+    char cmd[CMD_LEN],fname[FNAME_LEN], *token, input[MAX_BUF];
+    memset(cmd,0,CMD_LEN);
+    memset(fname,0,FNAME_LEN);
+    fprintf(stderr,"dbg su.c cmd, fname: %s %s\n",cmd,fname); 
+    strncpy(input,mesg->mesg_data,MAX_BUF);
+    fprintf(stderr,"dbg su.c input: %s \n",input); 
+    if( NULL == (token = strtok(input," \n"))){
+	perror("SERVER: empty cmd"); 
+	return 1;
+    }
     strcpy(cmd,token);
-    token = strtok(NULL," \n");
-    strcpy(fname,token);
-    fprintf(stderr,"dbg su.c 54: %s %s\n",cmd,fname); 
+    if( NULL == ( token = strtok(NULL," \n"))){
+	perror("SERVER: empty arg"); 
+	fname == NULL;
+	//return 1;
+    }else
+	strcpy(fname,token);
+    ///////////////////for dbg //////////////////
+    fprintf(stderr,"dbg su.c : %s %s\n",cmd,fname); 
 /**read the file content into mesg_data*/
     if( strcmp("read",cmd) == 0){
 	child_read_file(mesg,fname) ;
@@ -65,6 +78,9 @@ int child_handle_mesg(MESG* mesg){ // done
 	else{
 	    strcpy(mesg->mesg_data,"the server deleted the file succesfully");	
 	}
+    }
+    else if(strcmp("switch",cmd) == 0){
+	*mode = mesg->mesg_type; 
     }
     else
 	perror("SERVER: Bad command/filename");

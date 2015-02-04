@@ -5,13 +5,15 @@ void parent_handler(int sig){	//done
     return ;    
 }
 
-int parent_valid_input(char* input, char* cmd, char* arg, int* round){	//done
-    char* token;
+int parent_valid_input(char* input_global, char* cmd,char* arg, int* round){
+	//done
+    char *token, input[MAX_LEN];
+    strncpy(input,input_global,MAX_LEN);
     if( NULL == (token = strtok(input, " \n")) ){
 	perror("PARENT: strtok cmd"); 
     }
     strcpy(cmd,token);
-    printf("cmd: %s\n",cmd);
+    printf("dbg cu.c cmd: %s\n",cmd);
     if( *round == FIRST){
 /** command for 1st round must be switch or exit*/
 	if( 0!=strcmp("switch",cmd) && 0!=strcmp("exit",cmd)){
@@ -36,7 +38,7 @@ int parent_valid_input(char* input, char* cmd, char* arg, int* round){	//done
 	    return 0;
 	}
 	strcpy(arg,token);
-	printf("arg: %s\n",arg);
+	printf("dbg cu.c arg: %s\n",arg);
 	if( 0!=strcmp("pipe",arg) && 0!=strcmp("fifo",arg)
 	    && 0!=strcmp("svmq",cmd) && 0!=strcmp("pomq", cmd) ){
 	    printf("********CLIENT: Invalid IPC mode\n");
@@ -59,7 +61,6 @@ int parent_pass_mesg(MESG* mesg, int pid, int mode,char* input){//done
     if(MAX_BUF >= (strlen(input)+1) )
 	strncpy(mesg->mesg_data,input, strlen(input)+1);
 /**pass mesg to according to ipc mode*/
-    printf("dgb cu.c 62: mode %d\n",mode);
     switch(mode){
 	case 1:
 	    /**pipe*/	
@@ -84,10 +85,10 @@ int parent_pass_mesg(MESG* mesg, int pid, int mode,char* input){//done
 int parent_get_mesg(MESG *mesg, int mode){  //	done
     switch(mode){
 	case 1:	// pipe
-		printf("********CLIENT: Reading from pipe...");
+		printf("********CLIENT: Reading from pipe...\n");
 		read(PIPE_P_R, &(mesg->mesg_len), sizeof(int));
 		read(PIPE_P_R, &(mesg->mesg_type), sizeof(int));
-		read(PIPE_P_R, &(mesg->mesg_data), sizeof(MESG)-2*sizeof(int));
+		read(PIPE_P_R, &(mesg->mesg_data), MAX_BUF);
 		break;
 	case 2:	// fifo
 		break;
@@ -107,7 +108,7 @@ int parent_display_mesg(MESG* mesg){	//done
     printf("********CLIENT: Message from SERVER:********\n");
     printf("********CLIENT: mesg_len: %d\n",mesg->mesg_len);
     printf("********CLIENT: mesg_type: %d\n",mesg->mesg_type);
-    printf("********CLIENT: mesg_data: %s\n",mesg->mesg_data);
+    printf("********CLIENT: mesg_data: %s",mesg->mesg_data);
     printf("********************************************\n");
     return 0;
 }
