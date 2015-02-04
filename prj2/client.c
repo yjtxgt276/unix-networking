@@ -7,11 +7,12 @@ int ptoc[2], ctop[2];
 int main(int argc, char** argv){
 /**vars*/
     int round = FIRST;
-    int pid = 0, sv, mode = 0;
+    int pid = 0, sv, mode = 0, old_mode;
     FILE* fp; // not needed at client side
-    char input[MAX_LEN], *cmd, *arg; //buffer[sizeof(MESG)];//use mesg_rcv
+    char input[MAX_LEN], cmd[CMD_LEN], arg[FNAME_LEN]; //use mesg_rcv
     struct sigaction client_sa, old_sa;
     MESG mesg_snd, mesg_rcv;
+    char child_arg[CMD_LEN];
 /**setup signal handlers*/
     client_sa.sa_handler = parent_handler;
     client_sa.sa_flags = 0;
@@ -40,10 +41,10 @@ int main(int argc, char** argv){
 	    sigsuspend(&zeromask);	
 	got_usr1 = 0;
 /**wake up, setup ipc */
+	printf("********CALLING SERVER...\n");
 	child_setup_ipc(mode);
 /**execute server program*/
-	printf("********CALLING SERVER...\n");
-	if( -1 == execl("server.exe","server.exe", NULL) )
+	if( -1 == execl("server.exe","server.exe", mode,NULL) )
 	    perror("CHILD:exec server");
     }
     else{

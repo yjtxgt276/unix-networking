@@ -1,16 +1,21 @@
 #include "server_util.h"
 
-void server_handler(){
+void server_handler(int sig){	// done
     got_usr1 = 1;
     return;
 }
 
-int child_get_message(MESG* mesg, int mode){
+int child_get_mesg(MESG* mesg, int mode){
     switch(mode){
 	case 1:	//  pipe done
-	   read(STDIN_FILENO,mesg->mesg_len,sizeof(int));
-	   read(STDIN_FILENO,mesg->mesg_type,sizeof(int));
+	   read(STDIN_FILENO,&(mesg->mesg_len),sizeof(int));
+	   read(STDIN_FILENO,&(mesg->mesg_type),sizeof(int));
 	   read(STDIN_FILENO,mesg->mesg_data,MAX_BUF);
+	   //for test/////////////////////////////
+	   fprintf(stderr, "%d\n", mesg->mesg_len);
+	   fprintf(stderr, "%d\n", mesg->mesg_type);
+	   fprintf(stderr, "%s\n", mesg->mesg_data);
+	   //////////////////////////////////////////
 	   break;
 	case 2:	// fifo
 	   break;
@@ -23,7 +28,7 @@ int child_get_message(MESG* mesg, int mode){
     return 0;
 }
 
-int child_send_message(MESG* mesg, int mode){
+int child_send_mesg(MESG* mesg, int mode){
     switch(mode){
 	case 1:	//  pipe done
 	   write(STDOUT_FILENO,mesg,sizeof(MESG));
@@ -46,10 +51,10 @@ int child_handle_mesg(MESG* mesg){ // done
     strcpy(cmd,token);
     token = strtok(NULL," \n");
     strcpy(fname,token);
-    
+    fprintf(stderr,"dbg su.c 54: %s %s\n",cmd,fname); 
 /**read the file content into mesg_data*/
     if( strcmp("read",cmd) == 0){
-	child_read_file(mesg,fname) 
+	child_read_file(mesg,fname) ;
     }
 /**delete the file*/
     else if(strcmp("delete",cmd) == 0 ){
@@ -84,6 +89,7 @@ int child_read_file(MESG* mesg,char *fname){   // done
 	 (mesg->mesg_data)[i] = c;
 	 i++;
     }
+    fclose(fp);
     return 0;
 }
 

@@ -9,10 +9,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-//#define CMD_LEN 20
+#define CMD_LEN 20
 #define MAX_LEN 200
-//#define FNAME_LEN 180
-#define MAX_BUF 4092 // sizeof int portable?
+#define FNAME_LEN 180
+#define MAX_BUF 4096-2*sizeof(int) // sizeof int portable?
 
 /**COMMAND struct is not used*/
 typedef struct{

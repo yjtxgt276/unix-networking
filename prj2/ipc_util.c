@@ -10,6 +10,7 @@ int pipes_creat(int* p1, int* p2){
 }
 
 int child_setup_ipc(int mode){
+    mode = 1;// FOR TEST
     switch(mode){
 	case 1: //pipe done
 	    printf("********SERVER:ipc mode: pipe");
@@ -37,14 +38,17 @@ int child_setup_ipc(int mode){
 }
 
 int parent_setup_ipc(char* cmd, char* arg, int *mode){
+    printf("dbg iu.c 40, cmd: %s\n", cmd);
     static int old_mode = 0;
-    if( !strcmp("switch",cmd) ){
-	if( *mode == old_mode ){
+    if( strcmp("switch",cmd)==0 ){
+	printf("oldmode: %d\tcurmode:%d\n",old_mode, *mode);
+	if( *mode == old_mode && *mode != 0){
 	    printf("********CLIENT: ipc mode unchanged\n");
 	    return 0;
 	}
 	if( !strcmp("pipe",arg) ){
-	    old_mode = *mode = 1;
+	    *mode = 1;
+	    old_mode = *mode ; 
 	    printf("********CLIENT: ipc mode chosen: pipe\n");
 	}
 	else if( !strcmp("fifo",arg) ){

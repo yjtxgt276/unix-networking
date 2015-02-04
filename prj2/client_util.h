@@ -1,6 +1,6 @@
 #ifndef CLIENT_UTIL_H
 #define CLIENT_UTIL_H
-#include "prj2.h"
+//#include "prj2.h"
 #include "ipc_util.h"
 #define FIRST 0
 
