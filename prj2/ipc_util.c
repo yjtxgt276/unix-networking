@@ -11,7 +11,7 @@ int pipes_creat(int* p1, int* p2){
 
 int child_setup_ipc(int mode){
     switch(mode){
-	case 1: //pipe
+	case 1: //pipe done
 	    printf("********SERVER:ipc mode: pipe");
 	    if( -1 == close(STDIN_FILENO) )
 		perror("CHILD:closing stdin");
@@ -31,7 +31,7 @@ int child_setup_ipc(int mode){
 	case 4: //pomq
 	    printf("********SERVER:ipc mode: pomq");
 	    break;
-	default:
+	default:;
     }    
     return 0;
 }

@@ -9,12 +9,11 @@ int main(int argc, char** argv){
     int round = FIRST;
     int pid = 0, sv, mode = 0;
     FILE* fp; // not needed at client side
-    char input[MAX_LEN], *cmd, *arg, buffer[sizeof(MESG)];
+    char input[MAX_LEN], *cmd, *arg; //buffer[sizeof(MESG)];//use mesg_rcv
     struct sigaction client_sa, old_sa;
-    //COMMAND command;
-    MESG mesg;
+    MESG mesg_snd, mesg_rcv;
 /**setup signal handlers*/
-    client_sa.sa_handler = client_handler;
+    client_sa.sa_handler = parent_handler;
     client_sa.sa_flags = 0;
     sigset_t zeromask;
     sigemptyset(&client_sa.sa_mask);
@@ -35,11 +34,12 @@ int main(int argc, char** argv){
 	perror("PARENT: fork()");
 	return 0;
     }
-    else if( 0 == pid){ // child, server
+/** child, server*/
+    else if( 0 == pid){ 
 	while(got_usr1 == 0)
 	    sigsuspend(&zeromask);	
 	got_usr1 = 0;
-/**set up ipc mode here*/
+/**wake up, setup ipc */
 	child_setup_ipc(mode);
 /**execute server program*/
 	printf("********CALLING SERVER...\n");
@@ -50,24 +50,24 @@ int main(int argc, char** argv){
 /**parent, client*/
 	while(1){
 /**display using msg*/
-	    sigpromask(SIG_BLOCK,&client_sa.sa_mask, &old_sa.sa_mask);	
+	    sigprocmask(SIG_BLOCK,&client_sa.sa_mask, &old_sa.sa_mask);	
 	    printf("********CLIENT: please enter <command> <filename>\n"
 		"********CLIENT: commands are <switch>, <read>, <delete>\n "
 		"********CLIENT: or type <exit> to exit\n");
 /**get user input and check*/
 	    fgets(input,MAX_LEN,stdin);
-	    if( !valid_input(input,cmd,arg,round) )    
+	    if( !parent_valid_input(input,cmd,arg,&round) )    
 		continue;
 /**handle the command, either pass it to the server or exit*/
 	    parent_setup_ipc(cmd,arg,&mode);
-	    parent_pass_mesg(&mesg,pid,mode);
+	    parent_pass_mesg(&mesg_snd,pid,mode, input);
 /**got to sleep*/
 	    while(0 == got_usr1)
 		sigsuspend(&zeromask);
 	    got_usr1 = 0;
 	    sigprocmask(SIG_SETMASK,&old_sa.sa_mask,NULL);
-	    parent_get_mesg(&mesg);
-	    parent_display_mesg(&mesg);
+	    parent_get_mesg(&mesg_rcv, mode);
+	    parent_display_mesg(&mesg_rcv);
 	}
     }
     return 0;

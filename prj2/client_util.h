@@ -1,19 +1,15 @@
 #ifndef CLIENT_UTIL_H
 #define CLIENT_UTIL_H
 #include "prj2.h"
-#define FIRST 0;
-//#define PIPE_P_W ptoc[1] /**MACROs about pipes are defined in prj2.h*/
-//#define PIPE_P_R ctop[0]
-//#define PIPE_C_W ctop[1]
-//#define PIPE_C_R ptoc[0]
+#include "ipc_util.h"
+#define FIRST 0
 
-volatile sig_atomic_t got_usr1 = 0;
-//int ptoc[2], ctop[2]; // should def in client.c
-static void client_handler(int sig);
-int valid_input(char* input, COMMAND*, int state);
-int client_cmd(COMMAND*);
-int get_mesg(MESG*);
-int display_mesg(MESG*);
+extern volatile sig_atomic_t got_usr1;
+void parent_handler(int sig);
+int parent_valid_input(char* input, char* cmd, char* arg, int *round);
+int parent_pass_mesg(MESG* mesg_snd, int pid, int mode, char* input);
+int parent_get_mesg(MESG* mesg_rcv, int mode);
+int parent_display_mesg(MESG*);
 
 
 
