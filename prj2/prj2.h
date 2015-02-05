@@ -8,7 +8,8 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+#include <sys/stat.h>
+#include <fcntl.h>
 #define CMD_LEN 20
 #define MAX_LEN 200
 #define FNAME_LEN 180

@@ -7,21 +7,22 @@ void parent_handler(int sig){	//done
 
 int parent_valid_input(char* input_global, char* cmd,char* arg, int* round){
 	//done
+    fgets(input_global,MAX_LEN,stdin);
     char *token, input[MAX_LEN];
     strncpy(input,input_global,MAX_LEN);
     if( NULL == (token = strtok(input, " \n")) ){
 	perror("PARENT: strtok cmd"); 
     }
     strcpy(cmd,token);
-    printf("dbg cu.c cmd: %s\n",cmd);
     if( *round == FIRST){
 /** command for 1st round must be switch or exit*/
 	if( 0!=strcmp("switch",cmd) && 0!=strcmp("exit",cmd)){
-	    printf("********CLIENT: The please choose an IPC mode\n"
-			    "********CLIENT: Or type <exit> to exit");
+	    printf("********CLIENT: Please choose an IPC mode\n"
+			    "********CLIENT: Or type <exit> to exit\n");
 	    return 0;
 	}
 	(*round)++;
+	printf("dbg cu.c %d\n",*round);
     }
     else{
 /**command for other rounds*/
@@ -54,13 +55,16 @@ int parent_valid_input(char* input_global, char* cmd,char* arg, int* round){
     return 1;
 }
 
-int parent_pass_mesg(MESG* mesg, int pid, int mode,char* input){//done
+int parent_pass_mesg(MESG* mesg, int modepipe, 
+		int mode,char* input,int round,int pid){//done
 /**prepare the mesg*/
     mesg->mesg_len = sizeof(MESG);
     mesg->mesg_type = mode;
-    if(MAX_BUF >= (strlen(input)+1) )
+    if(MAX_BUF > (strlen(input)+1) )
 	strncpy(mesg->mesg_data,input, strlen(input)+1);
+    printf("dbg cu.c input: %s\n",input);
 /**pass mesg to according to ipc mode*/
+    printf("dbg cu.c write to ipc mode: %d\n",mode);
     switch(mode){
 	case 1:
 	    /**pipe*/	
@@ -69,15 +73,36 @@ int parent_pass_mesg(MESG* mesg, int pid, int mode,char* input){//done
 	    break;
 	case 2:
 	    /**fifo*/
+	    printf("********CLIENT: Writing to fifo...\n");
+	    /** tell the server which ipc to go*/
+	    if( -1 == write(PIPE_P_W,&mode,sizeof(int)))
+		perror("PARENT: WRTmode FIFO");
+	    /** write the actual mesg to ipc*/
+	    if( -1 == write(FIFO_P_W,mesg,sizeof(MESG)))
+		perror("PARENT: WRTmesg FIFO");
+
 	    break;
 	case 3:
 	    /**svmq*/
+	    printf("********CLIENT: Writing to svmq...\n");
+	    /** tell the server which ipc to go*/
+	    write(PIPE_P_W,&mode,sizeof(int));
+	    /** write the actual mesg to ipc*/
 	    break;
 	case 4:
 	    /**pomq*/
+	    printf("********CLIENT: Writing to pomq...\n");
+	    /** tell the server which ipc to go*/
+	    write(PIPE_P_W,&mode,sizeof(int));
+	    /** write the actual mesg to ipc*/
 	    break;
 	default:;
     }
+    if(round != FIRST+1)
+	    printf("dbg cu.c round %d mode: %d\n",round, mode);
+	if(write(modepipe,&mode,sizeof(int)) == -1)
+	    perror("PARENT: writing mode");
+	
     kill(pid,SIGUSR1); 
     return 0;
 }
@@ -91,6 +116,10 @@ int parent_get_mesg(MESG *mesg, int mode){  //	done
 		read(PIPE_P_R, &(mesg->mesg_data), MAX_BUF);
 		break;
 	case 2:	// fifo
+		printf("********CLIENT: Reading from pipe...\n");
+		read(FIFO_P_R, &(mesg->mesg_len), sizeof(int));
+		read(FIFO_P_R, &(mesg->mesg_type), sizeof(int));
+		read(FIFO_P_R, &(mesg->mesg_data), MAX_BUF);
 		break;
 	case 3:	// svmq
 		break;
@@ -113,11 +142,12 @@ int parent_display_mesg(MESG* mesg){	//done
     return 0;
 }
 
-
-
-
-
-
+void parent_usage(){
+    printf("********CLIENT: Usage********\n");
+    printf("********CLIENT: <switch> <IPC>\n");
+    printf("********CLIENT: <delete/read> <file>\n");
+    printf("********CLIENT: <exit>\n");
+}
 
 
 

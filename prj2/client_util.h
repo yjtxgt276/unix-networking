@@ -1,15 +1,16 @@
 #ifndef CLIENT_UTIL_H
 #define CLIENT_UTIL_H
-//#include "prj2.h"
-#include "ipc_util.h"
+#include "client_ipc.h"
 #define FIRST 0
 
 extern volatile sig_atomic_t got_usr1;
 void parent_handler(int sig);
 int parent_valid_input(char* input, char* cmd, char* arg, int *round);
-int parent_pass_mesg(MESG* mesg_snd, int pid, int mode, char* input);
+int parent_pass_mesg(MESG* mesg_snd, int fd, int mode, char* input, int round,
+		int pid);
 int parent_get_mesg(MESG* mesg_rcv, int mode);
 int parent_display_mesg(MESG*);
+void parent_usage();
 
 
 
