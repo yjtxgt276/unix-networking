@@ -56,7 +56,7 @@ int parent_valid_input(char* input_global, char* cmd,char* arg, int* round){
 }
 
 int parent_pass_mesg(MESG* mesg, int modepipe, 
-		int mode,char* input,int round,int pid){//done
+		int mode,char* input,int round,int pid){
 /**prepare the mesg*/
     mesg->mesg_len = sizeof(MESG);
     mesg->mesg_type = mode;
@@ -74,13 +74,9 @@ int parent_pass_mesg(MESG* mesg, int modepipe,
 	case 2:
 	    /**fifo*/
 	    printf("********CLIENT: Writing to fifo...\n");
-	    /** tell the server which ipc to go*/
-	    if( -1 == write(PIPE_P_W,&mode,sizeof(int)))
-		perror("PARENT: WRTmode FIFO");
 	    /** write the actual mesg to ipc*/
 	    if( -1 == write(FIFO_P_W,mesg,sizeof(MESG)))
-		perror("PARENT: WRTmesg FIFO");
-
+		perror("PARENT: WRTmesg FIFO");	//TODO: fix bad fd
 	    break;
 	case 3:
 	    /**svmq*/
@@ -100,9 +96,6 @@ int parent_pass_mesg(MESG* mesg, int modepipe,
     }
     if(round != FIRST+1)
 	    printf("dbg cu.c round %d mode: %d\n",round, mode);
-	if(write(modepipe,&mode,sizeof(int)) == -1)
-	    perror("PARENT: writing mode");
-	
     kill(pid,SIGUSR1); 
     return 0;
 }
@@ -116,7 +109,7 @@ int parent_get_mesg(MESG *mesg, int mode){  //	done
 		read(PIPE_P_R, &(mesg->mesg_data), MAX_BUF);
 		break;
 	case 2:	// fifo
-		printf("********CLIENT: Reading from pipe...\n");
+		printf("********CLIENT: Reading from fifo...\n");
 		read(FIFO_P_R, &(mesg->mesg_len), sizeof(int));
 		read(FIFO_P_R, &(mesg->mesg_type), sizeof(int));
 		read(FIFO_P_R, &(mesg->mesg_data), MAX_BUF);

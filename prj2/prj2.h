@@ -14,6 +14,11 @@
 #define MAX_LEN 200
 #define FNAME_LEN 180
 #define MAX_BUF 4096-2*sizeof(int) // sizeof int portable?
+#define FIFO1 "fifo1.o"
+#define FIFO2 "fifo2.o"
+//#define PIPE_MODE_R 3
+//#define PIPE_MODE_W 4
+
 
 /**COMMAND struct is not used*/
 typedef struct{

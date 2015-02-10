@@ -1,7 +1,7 @@
 #ifndef IPC_UTIL_H
 #define IPC_UTIL_H
 #include "prj2.h"
-//extern int ptoc[2], ctop[2];
+extern int ptoc[2], ctop[2];
 extern int fifo1_r,fifo1_w,fifo2_r,fifo2_w;
 #define PIPE_P_W ptoc[1]
 #define PIPE_P_R ctop[0]
@@ -12,7 +12,6 @@ extern int fifo1_r,fifo1_w,fifo2_r,fifo2_w;
 #define FIFO_P_W fifo2_w
 #define FIFO_C_R fifo2_r
 #define FIFO_C_W fifo1_w
-
 int server_set_ipc(int mode);
 
 

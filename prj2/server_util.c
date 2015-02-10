@@ -5,15 +5,18 @@ void server_handler(int sig){	// done
     return;
 }
 
-int child_get_mesg(MESG* mesg, int* mode){
-    switch(*mode){
+int child_get_mesg(MESG* mesg, int mode){
+    perror("dbg su.c reading mesg");
+    switch(mode){
 	case 1:	//  pipe done
-	   read(STDIN_FILENO,&(mesg->mesg_len),sizeof(int));
-	   read(STDIN_FILENO,&(mesg->mesg_type),sizeof(int));
-	   read(STDIN_FILENO,mesg->mesg_data,MAX_BUF);
+	   read(PIPE_C_R,&(mesg->mesg_len),sizeof(int));
+	   read(PIPE_C_R,&(mesg->mesg_type),sizeof(int));
+	   read(PIPE_C_R,mesg->mesg_data,MAX_BUF);
 	   break;
 	case 2:	// fifo
+    perror("dbg su.c reading fifo");
 	   read(FIFO_C_R,&(mesg->mesg_len),sizeof(int));
+	   perror("dbg su.c read fifo");
 	   read(FIFO_C_R,&(mesg->mesg_type),sizeof(int));
 	   read(FIFO_C_R,mesg->mesg_data,MAX_BUF);
 	   break;
@@ -34,7 +37,7 @@ int child_get_mesg(MESG* mesg, int* mode){
 int child_send_mesg(MESG* mesg, int mode){
     switch(mode){
 	case 1:	//  pipe done
-	   write(STDOUT_FILENO,mesg,sizeof(MESG));
+	   write(PIPE_C_W,mesg,sizeof(MESG));
 	   break;
 	case 2:	// fifo
 	   write(FIFO_C_W,mesg,sizeof(MESG));
@@ -48,7 +51,7 @@ int child_send_mesg(MESG* mesg, int mode){
     return 0;
 }
 
-int child_handle_mesg(MESG* mesg, int* mode){ // done
+int child_handle_mesg(MESG* mesg, int mode){ // done
 /**get the command and filename*/
     char cmd[CMD_LEN],fname[FNAME_LEN], *token, input[MAX_BUF];
     memset(cmd,0,CMD_LEN);
@@ -84,7 +87,7 @@ int child_handle_mesg(MESG* mesg, int* mode){ // done
 	}
     }
     else if(strcmp("switch",cmd) == 0){
-	*mode = mesg->mesg_type; 
+//	*mode = mesg->mesg_type; 
     }
     else
 	perror("SERVER: Bad command/filename");
