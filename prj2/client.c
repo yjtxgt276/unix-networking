@@ -3,7 +3,8 @@
 volatile sig_atomic_t got_usr1 ;
 int ptoc[2], ctop[2];
 int fifo1_r,fifo1_w,fifo2_r,fifo2_w;
-int mode_fd[2];
+int mode_fd[2],svmqid;
+int svmqid,pomqid_p,pomqid_c;
 
 int main(int argc, char** argv){
 /**vars*/
@@ -28,6 +29,11 @@ int main(int argc, char** argv){
 /**create IPCs for p <-> c*/
     parent_pipes_creat(ptoc,ctop); //	fd 5, 6 for pipe p <-> c, ci.c
     parent_fifos_creat(FIFO1, FIFO2);	// fd 7,8 for fifo p <-> c, ci.c
+    /**pomq*/
+    pomqid_p = mq_open(POMQ_P,O_RDONLY | O_CREAT, 0666, NULL);
+    fprintf(stderr,"dbg sl.c pomqid_p %d\n",pomqid_p);
+    pomqid_c = mq_open(POMQ_C,O_WRONLY|O_CREAT,0666,NULL);
+    fprintf(stderr,"dbg sl.c pomqid_c %d\n",pomqid_c);
 /** fork */
     if( -1 == ( pid = fork() ) ){
 	perror("PARENT: fork()");
@@ -47,8 +53,7 @@ int main(int argc, char** argv){
 	sprintf(server_arg[2],"%d",PIPE_C_W);
 	sprintf(server_arg[3],"%d",FIFO_C_R);
 	sprintf(server_arg[4],"%d",FIFO_C_W);
-	sprintf(server_arg[5],"%d",mode);//TODO
-	sprintf(server_arg[6],"%d",mode);//TODO
+	//sprintf(server_arg[5],"%d",pomqid);
 	fprintf(stderr,"dbg cl.c mode: %d\n",mode); // for dbg
 /** go to sleep */
 	while(got_usr1 == 0)
@@ -64,8 +69,9 @@ int main(int argc, char** argv){
     }
     else{
 /**parent, client*/
-		parent_setup_ipc(cmd,arg,mode);	// ci.c
-	    perror("dbg cl.c parent_setup_ipc");
+	//int svmqid;
+	parent_setup_ipc(&svmqid);	// ci.c
+	perror("dbg cl.c parent_setup_ipc");
 	while(1){
 /**display using msg*/
 	    sigprocmask(SIG_BLOCK,&client_sa.sa_mask, &old_sa.sa_mask);	
@@ -80,8 +86,9 @@ int main(int argc, char** argv){
 	    //if(round == FIRST)
 	//	parent_setup_ipc(cmd,arg,mode);	// ci.c
 	   // perror("dbg cl.c parent_setup_ipc");
-	    parent_pass_mesg(&mesg_snd,mode_fd[1],mode, input,round,pid);//cu.c
+	    parent_pass_mesg(&mesg_snd,mode, input);//cu.c
 	    perror("dbg cl.c parent_pass_mesg");
+	    kill(pid,SIGUSR1);
 /**got to sleep*/
 	    while(0 == got_usr1)
 		sigsuspend(&zeromask);
@@ -93,6 +100,7 @@ int main(int argc, char** argv){
 	    perror("dbg cl.c parent_display_mesg");
 	}
     }
+    cleanup();
     return 0;
 }
 

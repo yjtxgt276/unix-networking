@@ -41,7 +41,7 @@ int parent_valid_input(char* input_global, char* cmd,char* arg, int* round){
 	strcpy(arg,token);
 	printf("dbg cu.c arg: %s\n",arg);
 	if( 0!=strcmp("pipe",arg) && 0!=strcmp("fifo",arg)
-	    && 0!=strcmp("svmq",cmd) && 0!=strcmp("pomq", cmd) ){
+	    && 0!=strcmp("svmq",arg) && 0!=strcmp("pomq", arg) ){
 	    printf("********CLIENT: Invalid IPC mode\n");
 	    return 0;
 	} 
@@ -49,17 +49,18 @@ int parent_valid_input(char* input_global, char* cmd,char* arg, int* round){
 /**exit command*/
     if(0==strcmp("exit",cmd) ){
 	printf("********CLIENT: Exiting...\n");
+	cleanup();
 	kill(0,SIGINT);	
 	exit(0);
     }
     return 1;
 }
 
-int parent_pass_mesg(MESG* mesg, int modepipe, 
-		int mode,char* input,int round,int pid){
+int parent_pass_mesg(MESG* mesg, int mode,char* input){
 /**prepare the mesg*/
     mesg->mesg_len = sizeof(MESG);
     mesg->mesg_type = mode;
+    SVMESG svmesg;
     if(MAX_BUF > (strlen(input)+1) )
 	strncpy(mesg->mesg_data,input, strlen(input)+1);
     printf("dbg cu.c input: %s\n",input);
@@ -80,27 +81,31 @@ int parent_pass_mesg(MESG* mesg, int modepipe,
 	    break;
 	case 3:
 	    /**svmq*/
+	    svmesg.mytype = 3;
+	    memcpy(&(svmesg.mesg),mesg,sizeof(MESG));
 	    printf("********CLIENT: Writing to svmq...\n");
-	    /** tell the server which ipc to go*/
-	    write(PIPE_P_W,&mode,sizeof(int));
 	    /** write the actual mesg to ipc*/
+	    printf("dbg cu.c svmqid: %d\n",svmqid);
+	    msgsnd(svmqid,&svmesg,sizeof(MESG),0);
+	    perror("dbg cu.c msgsnd");
 	    break;
 	case 4:
 	    /**pomq*/
 	    printf("********CLIENT: Writing to pomq...\n");
-	    /** tell the server which ipc to go*/
-	    write(PIPE_P_W,&mode,sizeof(int));
 	    /** write the actual mesg to ipc*/
+	    mq_send(pomqid_c,(char*)mesg,sizeof(MESG),0);
+	    fprintf(stderr,"dbg cu.c size sent %d\n",sizeof(MESG));
 	    break;
 	default:;
     }
-    if(round != FIRST+1)
-	    printf("dbg cu.c round %d mode: %d\n",round, mode);
-    kill(pid,SIGUSR1); 
     return 0;
 }
 
 int parent_get_mesg(MESG *mesg, int mode){  //	done
+
+    SVMESG svmesg;
+    unsigned poprio = 4;
+    memset(mesg,0,sizeof(MESG));
     switch(mode){
 	case 1:	// pipe
 		printf("********CLIENT: Reading from pipe...\n");
@@ -115,8 +120,13 @@ int parent_get_mesg(MESG *mesg, int mode){  //	done
 		read(FIFO_P_R, &(mesg->mesg_data), MAX_BUF);
 		break;
 	case 3:	// svmq
+		printf("********CLIENT: Reading from svmq...\n");
+		msgrcv(svmqid,&svmesg,sizeof(MESG),3,0);
+		memcpy(mesg,&(svmesg.mesg),sizeof(MESG));
 		break;
 	case 4:	// pomq
+		printf("********CLIENT: Reading from pomq...\n");
+		mq_receive(pomqid_p,(char*)mesg,sizeof(MESG),NULL);
 		break;
 	default:
 		;

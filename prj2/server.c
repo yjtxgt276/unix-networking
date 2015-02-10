@@ -1,6 +1,7 @@
 #include "server.h"
 volatile sig_atomic_t got_usr1 = 1;
 int fifo1_r,fifo1_w,fifo2_r,fifo2_w, ctop[2], ptoc[2];
+int svmqid,pomqid_p,pomqid_c;
 
 int main(int argc, char** argv){
 /**SERVER is exec'd by the child who has setup ipc in advance*/
@@ -12,7 +13,12 @@ int main(int argc, char** argv){
     PIPE_C_W = atoi(argv[3]);
     FIFO_C_R = atoi(argv[4]);
     FIFO_C_W = atoi(argv[5]);
-    printf("dbg sv.c");
+    //pomqid = atoi(argv[6]);
+/**setup ipc for server*/
+    pomqid_c = mq_open(POMQ_C,O_RDONLY);
+    pomqid_p = mq_open(POMQ_P,O_WRONLY);
+    fprintf(stderr,"dbg sv.c pomqid: %d, %d\n",pomqid_c,pomqid_p);
+    server_set_ipc(&svmqid);
     
     printf("dbg sv.c mode: %d\n",mode);
 /**setup signal handling*/
@@ -44,13 +50,13 @@ int main(int argc, char** argv){
 	read(pipe_mode_r,&mode,sizeof(int)); // TODO:dbg only
 	fprintf(stderr,"dbg sv.c mode: %d\n",mode);
 	child_get_mesg(&mesg, mode);
-    perror("dbg s.c get_mesg");
+        perror("dbg s.c get_mesg");
 /**process the message to handle file option*/
 	child_handle_mesg(&mesg, mode);
-    perror("dbg s.c handle_mesg");
+	perror("dbg s.c handle_mesg");
 /**write the result back to the ipc*/
 	child_send_mesg(&mesg,mode);
-    perror("dbg s.c send mesg");
+	perror("dbg s.c send mesg");
 /**signal client and goto sleep*/
 	kill(getppid(),SIGUSR1);
     //perror("dbg s.c 4");
@@ -58,5 +64,6 @@ int main(int argc, char** argv){
 	i++;
     }
     perror("dbg s.c 5");
+    cleanup();
     return 0;
 }

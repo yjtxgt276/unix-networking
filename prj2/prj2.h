@@ -10,24 +10,20 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/msg.h>
+#include <mqueue.h>
+#include <fcntl.h>
+
 #define CMD_LEN 20
 #define MAX_LEN 200
 #define FNAME_LEN 180
 #define MAX_BUF 4096-2*sizeof(int) // sizeof int portable?
 #define FIFO1 "fifo1.o"
 #define FIFO2 "fifo2.o"
-//#define PIPE_MODE_R 3
-//#define PIPE_MODE_W 4
-
-
-/**COMMAND struct is not used*/
-typedef struct{
-    char *cmd;
-    char *arg;
-    int cmdlen;
-    int arglen;
-    //int ipc_mode = -1;
-}COMMAND;
+#define SVMQ "prj2.h"
+#define KEY 'Z'
+#define POMQ_P "/pomq_p.o"
+#define POMQ_C "/pomq_c.o"
 
 typedef struct{
     int mesg_len; // length of what?
@@ -35,7 +31,12 @@ typedef struct{
     char mesg_data[MAX_BUF];
 }MESG;
 
+typedef struct{
+    long mytype;
+    MESG mesg;
+}SVMESG;
 
+void cleanup();
 
 #endif
 

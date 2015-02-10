@@ -6,7 +6,10 @@ void server_handler(int sig){	// done
 }
 
 int child_get_mesg(MESG* mesg, int mode){
+    memset(mesg,0,sizeof(MESG));
     perror("dbg su.c reading mesg");
+    SVMESG svmesg;
+    unsigned poprio = 4;
     switch(mode){
 	case 1:	//  pipe done
 	   read(PIPE_C_R,&(mesg->mesg_len),sizeof(int));
@@ -21,8 +24,14 @@ int child_get_mesg(MESG* mesg, int mode){
 	   read(FIFO_C_R,mesg->mesg_data,MAX_BUF);
 	   break;
 	case 3: //svmq
+	   msgrcv(svmqid,&svmesg,sizeof(MESG),3,0);
+	   memcpy(mesg,&(svmesg.mesg),sizeof(MESG));
+    perror("dbg su.c reading svmq");
 	   break;
 	case 4:	//pomq
+	   mq_receive(pomqid_c,(char*)mesg,sizeof(MESG),NULL);
+	   printf("dbg su.c buf size: %d\n",sizeof(MESG));
+	   perror("dbg su.c mq_receive");
 	   break;
 	default:;
     }
@@ -35,6 +44,7 @@ int child_get_mesg(MESG* mesg, int mode){
 }
 
 int child_send_mesg(MESG* mesg, int mode){
+    SVMESG svmesg;
     switch(mode){
 	case 1:	//  pipe done
 	   write(PIPE_C_W,mesg,sizeof(MESG));
@@ -43,8 +53,12 @@ int child_send_mesg(MESG* mesg, int mode){
 	   write(FIFO_C_W,mesg,sizeof(MESG));
 	   break;
 	case 3: //svmq
+	   svmesg.mytype = 3;
+	   memcpy(&(svmesg.mesg),mesg,sizeof(MESG));
+	   msgsnd(svmqid,&svmesg,sizeof(MESG),0);
 	   break;
 	case 4:	//pomq
+	   mq_send(pomqid_p,(char*)mesg,sizeof(MESG),0);
 	   break;
 	default:;
     }

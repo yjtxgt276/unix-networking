@@ -17,22 +17,17 @@ int parent_pipes_creat(int* p1, int* p2){
     return 0;
 }
 
-int child_setup_ipc(int mode, int rpipe,int wpipe, int rfifo, int wfifo){
-
-	    FIFO_P_W = open(FIFO1,O_WRONLY ,0); // TODO: for dbg only
-		perror("dbg ci.c FIFOW open");
-	    FIFO_P_R = open(FIFO2,O_RDONLY ,0); //TODO: for dbg only
-		perror("dbg ci.c FIFOR open");
-
-    return 0;
-}
-
-int parent_setup_ipc(char* cmd, char* arg, int mode){
-    //static int old_mode = 0;
-		FIFO_P_R = open(FIFO1,O_RDONLY,0);
-		    perror("dbg ci.c CLIENT: OPEN FIFOR");
-		FIFO_P_W = open(FIFO2,O_WRONLY,0);
-		    perror("dbg ci.c CLIENT: OPEN FIFOW");
+int parent_setup_ipc(int* svmqid){
+/**pipe was setup in main*/
+/** open fifo*/
+    FIFO_P_R = open(FIFO1,O_RDONLY,0);
+    perror("dbg ci.c CLIENT: OPEN FIFOR");
+    FIFO_P_W = open(FIFO2,O_WRONLY,0);
+    perror("dbg ci.c CLIENT: OPEN FIFOW");
+/**setup svmq*/
+    int key;
+    key = ftok(SVMQ,KEY);
+    *svmqid = msgget(key, 0666 | IPC_CREAT);
     return 0;
 }
 
@@ -53,7 +48,7 @@ int parent_send_mode(char* cmd, char* arg,int* mode){
 		*mode = 4;
 	    }
 	    printf("dbg ci.c mode: %d\n",*mode);
-	    write(PIPE_MODE_W,mode,sizeof(int));	//TODO: define 4
+	    write(PIPE_MODE_W,mode,sizeof(int));
 	}
     return 0;
 }
