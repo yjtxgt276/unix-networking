@@ -17,7 +17,7 @@
 #define CMD_LEN 20
 #define MAX_LEN 200
 #define FNAME_LEN 180
-#define MAX_BUF 4096-2*sizeof(int) // sizeof int portable?
+#define MAX_BUF 4096-2*sizeof(int) 
 #define FIFO1 "fifo1.o"
 #define FIFO2 "fifo2.o"
 #define SVMQ "prj2.h"
@@ -26,7 +26,7 @@
 #define POMQ_C "/pomq_c.o"
 
 typedef struct{
-    int mesg_len; // length of what?
+    int mesg_len; 
     int mesg_type;  // used for ipc mode
     char mesg_data[MAX_BUF];
 }MESG;
@@ -39,15 +39,4 @@ typedef struct{
 void cleanup();
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
 

@@ -13,7 +13,6 @@ int parent_pipes_creat(int* p1, int* p2){
 	perror("pipe");
     if(-1==pipe(p2))
 	perror("pipe");
-    printf("dbg ci.c pipefd: %d %d\n", *p1, *p2);
     return 0;
 }
 
@@ -21,9 +20,7 @@ int parent_setup_ipc(int* svmqid){
 /**pipe was setup in main*/
 /** open fifo*/
     FIFO_P_R = open(FIFO1,O_RDONLY,0);
-    perror("dbg ci.c CLIENT: OPEN FIFOR");
     FIFO_P_W = open(FIFO2,O_WRONLY,0);
-    perror("dbg ci.c CLIENT: OPEN FIFOW");
 /**setup svmq*/
     int key;
     key = ftok(SVMQ,KEY);
@@ -34,7 +31,6 @@ int parent_setup_ipc(int* svmqid){
 int parent_send_mode(char* cmd, char* arg,int* mode){
 
     if( strcmp("switch",cmd)==0 ){
-	    printf("dbg ci.c arg: %s\n",arg);
 	   if( !strcmp("pipe",arg) ){
 		*mode = 1 ; 
 	    }
@@ -47,23 +43,8 @@ int parent_send_mode(char* cmd, char* arg,int* mode){
 	    else if( !strcmp("pomq",arg) ){
 		*mode = 4;
 	    }
-	    printf("dbg ci.c mode: %d\n",*mode);
 	    write(PIPE_MODE_W,mode,sizeof(int));
 	}
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

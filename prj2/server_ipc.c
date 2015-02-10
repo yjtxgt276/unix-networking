@@ -9,15 +9,3 @@ int server_set_ipc(int* svmqid){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-

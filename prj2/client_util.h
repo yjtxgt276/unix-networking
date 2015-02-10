@@ -1,7 +1,6 @@
 #ifndef CLIENT_UTIL_H
 #define CLIENT_UTIL_H
 #include "client_ipc.h"
-//#include "prj2.h"
 #define FIRST 0
 
 extern volatile sig_atomic_t got_usr1;
