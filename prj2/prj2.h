@@ -17,7 +17,7 @@
 #define CMD_LEN 20
 #define MAX_LEN 200
 #define FNAME_LEN 180
-#define MAX_BUF 4096-2*sizeof(int) 
+#define MAX_BUF 8192-2*sizeof(int) 
 #define FIFO1 "fifo1.o"
 #define FIFO2 "fifo2.o"
 #define SVMQ "prj2.h"
