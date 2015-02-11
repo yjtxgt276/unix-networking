@@ -120,7 +120,7 @@ int parent_get_mesg(MESG *mesg, int mode){
 		break;
 	case 4:	// pomq
 		printf("********CLIENT: Reading from pomq...\n");
-		mq_receive(pomqid_p,(char*)mesg,2*sizeof(MESG),NULL);
+		mq_receive(pomqid_p,(char*)mesg,sizeof(MESG),NULL);
 		break;
 	default:
 		;
