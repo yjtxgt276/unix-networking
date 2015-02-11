@@ -25,7 +25,7 @@ int child_get_mesg(MESG* mesg, int mode){
 	   memcpy(mesg,&(svmesg.mesg),sizeof(MESG));
 	   break;
 	case 4:	//pomq
-	   mq_receive(pomqid_c,(char*)mesg,2*sizeof(MESG),NULL);
+	   mq_receive(pomqid_c,(char*)mesg,sizeof(MESG),NULL);
 	   break;
 	default:;
     }
