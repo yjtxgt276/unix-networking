@@ -1,3 +1,4 @@
+/**prj2.h*/
 #ifndef	PRJ2_H 
 #define PRJ2_H
 #include <stdio.h>

@@ -1,5 +1,5 @@
 #include "client.h"
-
+/**client.c*/
 volatile sig_atomic_t got_usr1 ;
 int ptoc[2], ctop[2];
 int fifo1_r,fifo1_w,fifo2_r,fifo2_w;

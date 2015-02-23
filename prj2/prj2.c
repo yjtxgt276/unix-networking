@@ -1,5 +1,5 @@
 #include "prj2.h"
-
+/**prj2.c*/
 void cleanup(){
     int key = ftok(SVMQ,KEY);
     int svmqid = msgget(key,0666);
