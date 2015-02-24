@@ -6,7 +6,6 @@ int px_server(sem_t* sem, int shmfd){
     printf("px_server: started\n");
     char cmd[MAX_LEN], rslt[SHM_SIZE];
     //sem_t* sem;
-//    sem = sem_open("px_sem.o",0);
     while(1){
     /*read cmd from shm*/
 	px_read_shm(cmd,shmfd); 
@@ -16,6 +15,7 @@ int px_server(sem_t* sem, int shmfd){
 	px_write_shm(rslt,shmfd);
     /*unlock sem*/
 	px_sem_unlock(sem);
+	sleep(1);
     /*lock sem*/
 	px_sem_lock(sem);
     }

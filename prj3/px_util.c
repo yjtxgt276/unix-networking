@@ -53,7 +53,6 @@ int px_write_shm(char* data, int fd){
     }
     printf("px_write_shm:writing to shm...\n");
     strncpy(shmp,data,SHM_SIZE);
-    //memcpy(shmp, data,SHM_SIZE);
     if(munmap(shmp, SHM_SIZE) == -1){
 	perror("munmap");
 	return -1;
@@ -62,21 +61,11 @@ int px_write_shm(char* data, int fd){
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+int px_cleanup(sem_t* sem, char* semname,char* shmname){
+    sem_close(sem);
+    sem_unlink(semname);
+    shm_unlink(shmname);
+    return 0;
+}
 
 

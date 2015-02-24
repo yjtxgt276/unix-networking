@@ -11,12 +11,9 @@ int main(int argc, char** argv){
 	perror("sem_open");
 	exit(-1);
     }
-    //sem_unlink(sem_name);
 /*create shm*/
     if((shmfd = px_shm_init(shm_name)) == -1)
 	exit(-1);
-/*lock sem*/
-    //px_sem_lock(sem);
 /*fork to call server*/
     if( fork() == 0){
 	px_server(sem, shmfd);
@@ -28,13 +25,19 @@ int main(int argc, char** argv){
 	    if(read(STDIN_FILENO,cmd, MAX_LEN) == -1)
 		perror("px_client:get cmd"); 
     /*valid cmd*/
-	    if(valid_cmd(cmd) == -1);
-		//continue;   
+	    int rev = 0;
+	    if((rev = valid_cmd(cmd)) == -1)
+		continue;   
+	    else if(rev == ALL_EXIT){
+		printf("exiting...\n");
+		px_cleanup(sem,sem_name,shm_name);
+		kill(0,SIGINT);
+		exit(1);
+	    }
     /*write cmd to shm*/
 	    px_write_shm(cmd,shmfd);
     /*unlock sem*/
 	    px_sem_unlock(sem);
-	//    sleep(1);
     /*lock sem*/
 	    px_sem_lock(sem);
     /*read shm*/
