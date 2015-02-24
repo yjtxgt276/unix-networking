@@ -7,7 +7,7 @@ int sv_server(int semid, int shmid){
 /*get cmd from client*/
 	sv_read_shm(cmd, shmid);//TODO
 /*process cmd, writes result back*/
-	sv_process_cmd(cmd,rslt); 
+	process_cmd(cmd,rslt); 
 	sv_write_shm(rslt,shmid);//TODO
 /*release sem, go to sleep*/
 	sv_sem_unlock(semid);

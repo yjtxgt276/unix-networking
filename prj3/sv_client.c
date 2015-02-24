@@ -26,7 +26,6 @@ int main(int argc, char** argv){
 //    int pid;
     if((fork())==0){
     /**child*/
-//	execl("sv_server.exe","sv_server.exe",NULL); 
 	sv_server(semid, shmid);
     }
     else{
@@ -36,9 +35,9 @@ int main(int argc, char** argv){
 	    printf("sv_client: enter your command:\n");
 	    //if(fgets(cmd,MAX_LEN,stdin)==NULL)
 	    if(read(STDIN_FILENO,cmd,MAX_LEN)==-1)
-		perror("fgets");   
+		perror("get command");   
 /*check cmd*/
-	    if(sv_valid_cmd(cmd) == -1)
+	    if(valid_cmd(cmd) == -1)
 		continue; 
 /*write cmd to sham and goes waiting*/
 	    sv_write_shm(cmd,shmid); //
@@ -48,26 +47,9 @@ int main(int argc, char** argv){
 	    sv_sem_lock(semid);
 	    sv_read_shm(data,shmid); // 
 /*show result*/
-	    sv_display(data);
+	    display(data);
 	}
     }
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

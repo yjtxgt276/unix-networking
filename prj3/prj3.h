@@ -10,6 +10,10 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <signal.h>
+#include <semaphore.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 
 #define CMD_LEN 50
 #define FN_LEN 150
@@ -17,5 +21,6 @@
 #define ALL_EXIT 100
 #define SW_PX 101
 #define SW_SV 102
+#define SHM_SIZE 4096
 
 #endif
