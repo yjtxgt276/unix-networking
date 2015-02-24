@@ -1,7 +1,8 @@
 #ifndef SV_UTIL_H 
 #define SV_UTIL_H
 #include "prj3.h"
-union semnum{	//
+#define SHM_SIZE 4096
+union semun{	//
     int val;
     struct semid_ds *buf;
     ushort *array;

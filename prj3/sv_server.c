@@ -1,34 +1,17 @@
 #include "sv_server.h"
-
-int main(int argc, char** argv){
-    char cmd[CMD_LEN];
-/*connect to semaphore or block*/
-    key_t key;
-    int semid;
-    if((key = ftok("prj3.h",'X'))==-1){
-	perror("ftok"); 
-	exit(1);
-    }
+int sv_server(int semid, int shmid){
+    char cmd[MAX_LEN], rslt[SHM_SIZE];
     while(1){
-	if((semid = semget(key,0,0)) >0)
-	    break;
-    }
-/**/
-/*attach to sham*/
-    
-
-/*loop*/
-    while(1){
-/*wakes up, lock sem*/ 
+/*wakes up,try to lock sem, block here*/
 	sv_sem_lock(semid);	    
 /*get cmd from client*/
-	read_sham(cmd, SHAMID);//TODO
+	sv_read_shm(cmd, shmid);//TODO
 /*process cmd, writes result back*/
-	process_cmd(cmd,rslt);//TODO
-	write_sham(rslt,SHAMID);//TODO
+	sv_process_cmd(cmd,rslt); 
+	sv_write_shm(rslt,shmid);//TODO
 /*release sem, go to sleep*/
 	sv_sem_unlock(semid);
-	 
+	//sv_sem_lock(semid);	    
     }
     return 0;
 }
