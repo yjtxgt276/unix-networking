@@ -1,10 +1,13 @@
 #include "px_server.h"
 
-int px_server(sem_t *sem, int shmfd){
-    char cmd[MAX_LEN], rslt[SHM_SIZE];
-    while(1){
+int px_server(sem_t* sem, int shmfd){
     /*lock sem*/
 	px_sem_lock(sem);
+    printf("px_server: started\n");
+    char cmd[MAX_LEN], rslt[SHM_SIZE];
+    //sem_t* sem;
+//    sem = sem_open("px_sem.o",0);
+    while(1){
     /*read cmd from shm*/
 	px_read_shm(cmd,shmfd); 
     /*process cmd*/
@@ -13,6 +16,8 @@ int px_server(sem_t *sem, int shmfd){
 	px_write_shm(rslt,shmfd);
     /*unlock sem*/
 	px_sem_unlock(sem);
+    /*lock sem*/
+	px_sem_lock(sem);
     }
     return 0;
 }
