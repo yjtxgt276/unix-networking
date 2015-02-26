@@ -19,6 +19,8 @@
 #define FN_LEN 150
 #define MAX_LEN 200
 #define ALL_EXIT 100
+#define SW_PX 101
+#define SW_SV 102
 #define SHM_SIZE 4096
 
 #endif
