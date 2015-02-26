@@ -61,17 +61,11 @@ int px_write_shm(char* data, int fd){
 
 }
 
-<<<<<<< HEAD
 int px_cleanup(sem_t* sem_p,sem_t* sem_c, char* semname_p, char* semname_c,char* shmname){
     sem_close(sem_p);
     sem_close(sem_c);
     sem_unlink(semname_p);
     sem_unlink(semname_c);
-=======
-int px_cleanup(sem_t* sem, char* semname,char* shmname){
-    sem_close(sem);
-    sem_unlink(semname);
->>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
     shm_unlink(shmname);
     return 0;
 }
