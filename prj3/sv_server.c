@@ -11,6 +11,7 @@ int sv_server(int semid, int shmid){
 	sv_write_shm(rslt,shmid);//TODO
 /*release sem, go to sleep*/
 	sv_sem_unlock(semid);
+	//sv_sem_lock(semid);	    
     }
     return 0;
 }
