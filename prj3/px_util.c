@@ -53,7 +53,6 @@ int px_write_shm(char* data, int fd){
     }
     printf("px_write_shm:writing to shm...\n");
     strncpy(shmp,data,SHM_SIZE);
-    //memcpy(shmp, data,SHM_SIZE);
     if(munmap(shmp, SHM_SIZE) == -1){
 	perror("munmap");
 	return -1;
@@ -62,7 +61,6 @@ int px_write_shm(char* data, int fd){
 
 }
 
-<<<<<<< HEAD
 int px_cleanup(sem_t* sem_p,sem_t* sem_c, char* semname_p, char* semname_c,char* shmname){
     sem_close(sem_p);
     sem_close(sem_c);
@@ -71,23 +69,5 @@ int px_cleanup(sem_t* sem_p,sem_t* sem_c, char* semname_p, char* semname_c,char*
     shm_unlink(shmname);
     return 0;
 }
-=======
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> parent of 571fda7... px sem race, put a sleep to solve it temply
 
 

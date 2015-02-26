@@ -17,12 +17,9 @@ int main(int argc, char** argv){
 	perror("sem_open");
 	exit(-1);
     }
-    //sem_unlink(sem_name);
 /*create shm*/
     if((shmfd = px_shm_init(shm_name)) == -1)
 	exit(-1);
-/*lock sem*/
-    //px_sem_lock(sem);
 /*fork to call server*/
     if( fork() == 0){
 	px_server(sem_c,sem_p, shmfd);
@@ -34,7 +31,6 @@ int main(int argc, char** argv){
 	    if(read(STDIN_FILENO,cmd, MAX_LEN) == -1)
 		perror("px_client:get cmd"); 
     /*valid cmd*/
-<<<<<<< HEAD
 	    int rev = 0;
 	    if((rev = valid_cmd(cmd)) == -1)
 		continue;   
@@ -48,15 +44,6 @@ int main(int argc, char** argv){
 	    px_write_shm(cmd,shmfd);
     /*unlock sem*/
 	    px_sem_unlock(sem_c);
-=======
-	    if(valid_cmd(cmd) == -1);
-		//continue;   
-    /*write cmd to shm*/
-	    px_write_shm(cmd,shmfd);
-    /*unlock sem*/
-	    px_sem_unlock(sem);
-	//    sleep(1);
->>>>>>> parent of 571fda7... px sem race, put a sleep to solve it temply
     /*lock sem*/
 	    px_sem_lock(sem_p);
     /*read shm*/

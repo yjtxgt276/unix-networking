@@ -80,7 +80,6 @@ int sv_write_shm(char *str, int shmid){
 	return (-1);
     }
     printf("sv_write_shm: writing to shm...\n");
-    //strncpy(data, str, SHM_SIZE);
     memcpy(shmp, str,SHM_SIZE);
     if(shmdt(shmp)==-1){
 	perror("shmdt"); 
@@ -105,5 +104,9 @@ int sv_read_shm(char *dest, int shmid){
     return 0;
 }
 
-
+int sv_cleanup(int semid, int shmid){
+    semctl(semid,0,IPC_RMID);
+    shmctl(shmid,IPC_RMID,NULL);  
+    return 0;
+}
 

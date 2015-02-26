@@ -22,8 +22,7 @@ int main(int argc, char** argv){
     }
 /*lock the semaphore*/
     sv_sem_lock(semid);
-/*fork the server, server goes to wait cuz the lock above TODO*/
-//    int pid;
+/*fork the server, server goes to wait cuz the lock above */
     if((fork())==0){
     /**child*/
 	sv_server(semid, shmid);
@@ -33,12 +32,18 @@ int main(int argc, char** argv){
 	while(1){
 /*get user cmd*/	
 	    printf("sv_client: enter your command:\n");
-	    //if(fgets(cmd,MAX_LEN,stdin)==NULL)
 	    if(read(STDIN_FILENO,cmd,MAX_LEN)==-1)
 		perror("get command");   
 /*check cmd*/
-	    if(valid_cmd(cmd) == -1)
+	    int rev = 0;
+	    if((rev = valid_cmd(cmd)) == -1)
 		continue; 
+	    else if(rev == ALL_EXIT){
+		sv_cleanup(semid,shmid);
+		printf("exiting...\n");
+		kill(0,SIGINT);
+		exit(1);
+	    }
 /*write cmd to sham and goes waiting*/
 	    sv_write_shm(cmd,shmid); //
 /*unlock the semaphore*/
