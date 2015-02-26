@@ -62,7 +62,6 @@ int px_write_shm(char* data, int fd){
 
 }
 
-<<<<<<< HEAD
 int px_cleanup(sem_t* sem_p,sem_t* sem_c, char* semname_p, char* semname_c,char* shmname){
     sem_close(sem_p);
     sem_close(sem_c);
@@ -71,7 +70,6 @@ int px_cleanup(sem_t* sem_p,sem_t* sem_c, char* semname_p, char* semname_c,char*
     shm_unlink(shmname);
     return 0;
 }
-=======
 
 
 
@@ -88,6 +86,5 @@ int px_cleanup(sem_t* sem_p,sem_t* sem_c, char* semname_p, char* semname_c,char*
 
 
 
->>>>>>> parent of 571fda7... px sem race, put a sleep to solve it temply
 
 
