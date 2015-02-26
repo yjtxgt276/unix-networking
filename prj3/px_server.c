@@ -4,6 +4,7 @@ int px_server(sem_t* sem_c,sem_t* sem_p, int shmfd){
     printf("px_server: started\n");
     char cmd[MAX_LEN], rslt[SHM_SIZE];
     //sem_t* sem;
+//    sem = sem_open("px_sem.o",0);
     while(1){
     /*lock sem*/
 	px_sem_lock(sem_c);
@@ -14,8 +15,14 @@ int px_server(sem_t* sem_c,sem_t* sem_p, int shmfd){
     /*write rslt to shm*/
 	px_write_shm(rslt,shmfd);
     /*unlock sem*/
+<<<<<<< HEAD
 	px_sem_unlock(sem_p);
 	//sleep(1);
+=======
+	px_sem_unlock(sem);
+    /*lock sem*/
+	px_sem_lock(sem);
+>>>>>>> parent of 571fda7... px sem race, put a sleep to solve it temply
     }
     return 0;
 }
