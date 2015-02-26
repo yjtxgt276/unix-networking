@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/**server.c*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 #include "server.h"
 volatile sig_atomic_t got_usr1 = 1;
 int fifo1_r,fifo1_w,fifo2_r,fifo2_w, ctop[2], ptoc[2];

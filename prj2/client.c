@@ -1,5 +1,9 @@
 #include "client.h"
+<<<<<<< HEAD
 
+=======
+/**client.c*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 volatile sig_atomic_t got_usr1 ;
 int ptoc[2], ctop[2];
 int fifo1_r,fifo1_w,fifo2_r,fifo2_w;

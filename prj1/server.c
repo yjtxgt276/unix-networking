@@ -64,5 +64,9 @@ void read_file(char *filename){
 	putchar(c);
     }
     printf("************ [%s] ***************\n",filename);
+<<<<<<< HEAD
+=======
+    //free(line);
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
     return;
 }

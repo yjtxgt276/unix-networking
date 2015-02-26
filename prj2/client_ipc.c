@@ -1,5 +1,9 @@
 #include "client_ipc.h"
+<<<<<<< HEAD
 
+=======
+/**client_ipc.c*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 int parent_fifos_creat(char* fifo1,char* fifo2){
     if( -1 == mkfifo(fifo1,FILE_MODE) )
 	perror("mkfifo");

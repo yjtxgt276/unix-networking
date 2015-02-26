@@ -2,7 +2,11 @@
 #define CLIENT_UTIL_H
 #include "client_ipc.h"
 #define FIRST 0
+<<<<<<< HEAD
 
+=======
+/**client_util.h*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 extern volatile sig_atomic_t got_usr1;
 void parent_handler(int sig);
 int parent_valid_input(char* input, char* cmd, char* arg, int *round);

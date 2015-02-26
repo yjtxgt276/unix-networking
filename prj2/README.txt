@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 1.Usage:
 	After launching client.exe, enter in some commands in following form:
 	a) <switch> <ipc>
@@ -24,3 +25,6 @@ mode, then read data from specified ipc accordingly. Every time the user
 switch to another ipc mode, the server need NOT to be executed again, instead
 it just read data from a different ipc item.
 	The server and client are synchronized via signal handling.
+=======
+
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c

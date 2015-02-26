@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/**prj2.h*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 #ifndef	PRJ2_H 
 #define PRJ2_H
 #include <stdio.h>

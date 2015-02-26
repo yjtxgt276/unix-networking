@@ -1,5 +1,9 @@
 #include "server_util.h"
+<<<<<<< HEAD
 
+=======
+/**server_util.c*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 void server_handler(int sig){	
     got_usr1 = 1;
     return;

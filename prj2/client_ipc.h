@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/**client_ipc.h**/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 #ifndef IPC_UTIL_H
 #define IPC_UTIL_H
 #include "prj2.h"

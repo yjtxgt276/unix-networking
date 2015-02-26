@@ -1,5 +1,9 @@
 #include "prj2.h"
+<<<<<<< HEAD
 
+=======
+/**prj2.c*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 void cleanup(){
     int key = ftok(SVMQ,KEY);
     int svmqid = msgget(key,0666);

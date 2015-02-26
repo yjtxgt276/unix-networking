@@ -1,5 +1,9 @@
 #include "client_util.h"
+<<<<<<< HEAD
 
+=======
+/**client_util.c*/
+>>>>>>> 571fda7bd2106696560489fde0829516c2b1241c
 void parent_handler(int sig){	
     got_usr1 = 1;
     return ;    
