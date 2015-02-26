@@ -11,19 +11,9 @@ int valid_cmd(char* str){
 	strcpy(cmd, token);
     if( 0==strcmp("read",cmd) ){}
     else if( 0==strcmp("delete",cmd) ){}
-    else if( 0==strcmp("switch",cmd) ){
-	//TODO 
-	//sv_cleanup();
-	kill(0,SIGINT);
-	exit(SW_PX);    
-    }
-    else if( 0==strcmp("exit",cmd) ){
-	printf("exiting..."); 
-	//TODO
-	//sv_cleanup();
-	kill(0,SIGINT);
-	exit(ALL_EXIT);    
-    }
+    else if( 0==strcmp("switch",cmd) ){}
+    else if( 0==strcmp("exit",cmd) )
+	return ALL_EXIT; 
     else{
 	printf("valid_cmd: invalid command\n"); 
 	return -1;
