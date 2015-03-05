@@ -11,18 +11,9 @@ int valid_cmd(char* str){
 	strcpy(cmd, token);
     if( 0==strcmp("read",cmd) ){}
     else if( 0==strcmp("delete",cmd) ){}
-    else if( 0==strcmp("switch",cmd) ){
-	//TODO 
-	//sv_cleanup();
-	kill(0,SIGINT);
-	exit(SW_PX);    
-    }
     else if( 0==strcmp("exit",cmd) ){
-	printf("exiting..."); 
-	//TODO
-	//sv_cleanup();
-	kill(0,SIGINT);
-	exit(ALL_EXIT);    
+	printf("exiting...\n"); 
+	return (ALL_EXIT);    
     }
     else{
 	printf("valid_cmd: invalid command\n"); 
@@ -85,7 +76,7 @@ int read_file(char* dest, char* fname){
     }
     int i =0;
     while(EOF != (c=fgetc(fp))){
-	if(i == SHM_SIZE){
+	if(i == MAXDATASIZE){
 	    printf("server: file too large\n");
 	    strcpy(dest, "from server: file too large\n");
 	    return -1;
@@ -97,4 +88,11 @@ int read_file(char* dest, char* fname){
     return 0;
 }
 
+void *get_in_addr(struct sockaddr *sa){
+/*get address info*/
+    if (sa->sa_family == AF_INET) 
+	return &(((struct sockaddr_in*)sa)->sin_addr);
+    else
+	return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
 

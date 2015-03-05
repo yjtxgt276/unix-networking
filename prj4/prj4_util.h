@@ -6,6 +6,7 @@ int valid_cmd(char* cmd);
 int display(char* data);
 int process_cmd(char* str,char* dest);
 int read_file(char* dest, char* fname);
+void* get_in_addr(struct sockaddr* sa);
 
 
 
